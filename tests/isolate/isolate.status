@@ -1,0 +1,147 @@
+# Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+[ $runtime == vm ]
+browser/*: SkipByDesign  # Browser specific tests
+isolate_stress_test: Fail # Issue 12588: This should be able to pass when we have wrapper-less tests.
+
+[ $runtime != vm ]
+checked_test: Skip # Unsupported.
+
+[ $runtime == vm && $arch == mips && $mode == debug ]
+mandel_isolate_test: Skip # Uses 600 MB Ram on our 1 GB test device.
+
+[ $compiler == none ]
+compile_time_error_test/01: Skip # Issue 12587
+ping_test: Skip           # Resolve test issues
+ping_pause_test: Skip     # Resolve test issues
+kill3_test: Pass, Fail    # Bad test: expects total message order
+
+message3_test/byteBuffer: Crash # Issue 21818
+message3_test/int32x4: Crash # Issue 21818
+
+[ $compiler == none && $runtime == ContentShellOnAndroid ]
+*: Skip # Isolate tests are timing out flakily on Android content_shell.  Issue 19795
+
+[ $compiler == dart2js && $runtime == safarimobilesim ]
+compile_time_error_test/none: Pass, Slow
+
+[ $compiler == dart2js && $jscl ]
+browser/*: SkipByDesign  # Browser specific tests
+
+[ $compiler == dart2js && $runtime == jsshell ]
+pause_test: Fail, OK  # non-zero timer not supported.
+timer_isolate_test: Fail, OK # Needs Timer to run.
+
+[ $compiler == dart2js && $runtime == safari ]
+cross_isolate_message_test: Skip # Issue 12627
+message_test: Skip # Issue 12627
+
+[ $compiler == dart2js ]
+spawn_uri_vm_test: SkipByDesign # Test uses a ".dart" URI.
+spawn_uri_nested_vm_test: SkipByDesign # Test uses a ".dart" URI.
+spawn_uri_exported_main_test: SkipByDesign # Test uses a ".dart" URI.
+issue_21398_parent_isolate_test: SkipByDesign # Test uses a ".dart" URI.
+issue_21398_parent_isolate1_test: SkipByDesign # Test uses a ".dart" URI.
+issue_21398_parent_isolate2_test: SkipByDesign # Test uses a ".dart" URI.
+issue_24243_parent_isolate_test: SkipByDesign # Test uses a ".dart" URI.
+function_send1_test: SkipByDesign   # Test uses a ".dart" URI.
+error_exit_at_spawnuri_test: SkipByDesign  # Test uses a ".dart" URI.
+error_at_spawnuri_test: SkipByDesign  # Test uses a ".dart" URI.
+exit_at_spawnuri_test: SkipByDesign  # Test uses a ".dart" URI.
+message3_test/constList: RuntimeError # Issue 21817
+message3_test/constList_identical: RuntimeError # Issue 21817
+message3_test/constMap: RuntimeError  # Issue 21817
+message3_test/constInstance: RuntimeError # Issue 21817
+browser/issue_12474_test: CompileTimeError # Issue 22529
+enum_const_test/02: RuntimeError # Issue 21817
+
+[ $compiler == dart2js && $runtime != d8 ]
+error_exit_at_spawn_test: Skip # Issue 23876
+error_at_spawn_test: Skip # Issue 23876
+exit_at_spawn_test: Skip # Issue 23876
+
+[ $compiler == dart2js && $jscl ]
+spawn_uri_test: SkipByDesign # Loading another file is not supported in JS shell
+
+[ $csp ]
+deferred_in_isolate2_test: Skip # Issue 16898. Deferred loading does not work from an isolate in CSP-mode
+
+[ $compiler == dart2js && $runtime == chromeOnAndroid ]
+isolate_stress_test: Pass, Slow # TODO(kasperl): Please triage.
+
+mandel_isolate_test: Pass, Timeout # TODO(kasperl): Please triage.
+
+[ $compiler == dart2js && ( $runtime == ff || $runtime == safari || $runtime == drt || $runtime == chrome || $runtime == chromeOnAndroid) ]
+isolate_stress_test: Pass, Slow # Issue 10697
+
+[ $compiler == dart2js && $runtime == chromeOnAndroid ]
+unresolved_ports_test: Pass, Timeout # Issue 15610
+
+[ $compiler == none && $runtime == drt ]
+spawn_uri_nested_vm_test: Skip # Issue 14463
+
+[ $jscl ]
+spawn_uri_multi_test/none: RuntimeError # Issue 13544
+
+[ $compiler == none && ($runtime == dartium || $runtime == drt || $runtime == ContentShellOnAndroid) ]
+pause_test: Fail         # Not implemented yet
+
+[ $compiler == none && $runtime == ContentShellOnAndroid ]
+nested_spawn2_test: Skip # Issue 19127: This test is timing out.
+
+[ $compiler == none && ($runtime == dartium || $runtime == ContentShellOnAndroid) ]
+spawn_uri_nested_vm_test: Skip # Issue 14479: This test is timing out.
+
+[ $compiler == none && ( $runtime == dartium || $runtime == drt || $runtime == ContentShellOnAndroid) ]
+typed_message_test: Crash, Fail # Issue 13921, 14400
+message_enum_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+compile_time_error_test/none: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+isolate_import_test/none: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+issue_21398_parent_isolate_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+issue_21398_parent_isolate1_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+isolate_stress_test: Skip # Issue 13921 Dom isolates don't support spawnFunction
+message3_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+start_paused_test: Fail, OK   # Issue 13921 Dom isolates don't support spawnFunction
+object_leak_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+simple_message_test/none: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+spawn_uri_missing_from_isolate_test: RuntimeError # Issue 17649
+spawn_uri_missing_test: SkipSlow # Times out.
+isolate_current_test: Fail, OK # Issue 13921 Dom isolates don't support spawnFunction
+function_send_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+ondone_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+kill_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+kill2_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+kill3_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+kill_self_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+handle_error_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+handle_error2_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+handle_error3_test: Fail, OK  # 13921 Dom isolates don't support spawnFunction
+timer_isolate_test: Fail, Pass # Issue 15487. Issue 13921: Dom isolates don't support spawnFunction
+deferred_in_isolate2_test: Fail, OK  # Issue 16209, 13921 Dom isolates don't support spawnFunction
+bool_from_environment_default_value_test: Skip
+int_from_environment_default_value_test: Skip
+string_from_environment_default_value_test: Skip
+error_exit_at_spawn_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+error_at_spawn_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+exit_at_spawn_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+error_exit_at_spawnuri_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+error_at_spawnuri_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+exit_at_spawnuri_test: SkipByDesign  # 13921 Dom isolates don't support spawnFunction
+
+
+[ $compiler == dartanalyzer || $compiler == dart2analyzer ]
+browser/typed_data_message_test: StaticWarning
+mint_maker_test: StaticWarning
+
+[ $compiler != none || $runtime != vm ]
+package_root_test: SkipByDesign # Uses dart:io.
+
+[ $compiler == dart2js && $cps_ir ]
+deferred_in_isolate2_test: RuntimeError # A.loadLibrary is not a function
+isolate_current_test: RuntimeError # Please triage this failure.
+message3_test/byteBuffer: RuntimeError # Please triage this failure.
+message3_test/fun: RuntimeError # Please triage this failure.
+message3_test/int32x4: RuntimeError # Please triage this failure.
+message3_test/none: RuntimeError # Please triage this failure.

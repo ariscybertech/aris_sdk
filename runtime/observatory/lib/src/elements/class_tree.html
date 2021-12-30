@@ -1,0 +1,42 @@
+<link rel="import" href="../../../../packages/polymer/polymer.html">
+<link rel="import" href="nav_bar.html">
+<link rel="import" href="observatory_element.html">
+<link rel="import" href="class_ref.html">
+
+<polymer-element name="class-tree" extends="observatory-element">
+  <template>
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+      .table {
+        border-spacing: 0px;
+        width: 100%;
+        margin-bottom: 20px
+      vertical-align: middle;
+      }
+
+      tr {
+        background-color: #FFFFFF;
+      }
+
+      tr:hover {
+        background-color: #FAFAFA;
+      }
+    </style>
+    <nav-bar>
+      <top-nav-menu last="{{ true }}"></top-nav-menu>
+    </nav-bar>
+    <div class="content-centered">
+      <h1>Class Hierarchy</h1>
+      <table id="tableTree" class="table">
+        <thead id="tableTreeHeader">
+          <tr>
+            <th>Class</th>
+          </tr>
+        </thead>
+        <tbody id="tableTreeBody"></tbody>
+      </table>
+    </div>
+  </template>
+</polymer-element>
+
+<script type="application/dart" src="class_tree.dart"></script>

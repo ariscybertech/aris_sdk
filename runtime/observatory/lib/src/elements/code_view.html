@@ -1,0 +1,146 @@
+<link rel="import" href="../../../../packages/polymer/polymer.html">
+<link rel="import" href="function_ref.html">
+<link rel="import" href="instance_ref.html">
+<link rel="import" href="observatory_element.html">
+<link rel="import" href="nav_bar.html">
+<link rel="import" href="script_ref.html">
+<link rel="import" href="view_footer.html">
+
+<polymer-element name="code-view" extends="observatory-element">
+  <template>
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+      .table {
+        table-layout: fixed;
+      }
+
+      th:nth-of-type(1), td:nth-of-type(1) {
+        min-width: 10em;
+        text-align: left;
+      }
+
+      th:nth-of-type(2), td:nth-of-type(2) {
+        min-width: 10em;
+        text-align: left;
+      }
+
+      th:nth-of-type(3), td:nth-of-type(3) {
+        padding-right: 3em;
+      }
+
+      th:nth-of-type(4), td:nth-of-type(4) {
+        padding-left: 3em;
+        overflow: visible;
+        white-space: pre;
+        display: block;
+      }
+
+      tr:hover > td {
+        background-color: #F4C7C3;
+      }
+
+    </style>
+    <nav-bar>
+      <top-nav-menu></top-nav-menu>
+      <vm-nav-menu vm="{{ code.isolate.vm }}"></vm-nav-menu>
+      <isolate-nav-menu isolate="{{ code.isolate }}"></isolate-nav-menu>
+      <nav-menu link="{{ makeLink('/inspect', code) }}" anchor="{{ code.name }}" last="{{ true }}"></nav-menu>
+      <nav-refresh callback="{{ refresh }}"></nav-refresh>
+      <nav-refresh callback="{{ refreshTicks }}" label="Refresh Ticks"></nav-refresh>
+    </nav-bar>
+    <div class="content">
+      <template if="{{ code.isDartCode && code.isOptimized }}">
+        <h1>Optimized code for {{ code.name }}</h1>
+      </template>
+      <template if="{{ !(code.isDartCode && code.isOptimized) }}">
+        <h1>Code for {{ code.name }}</h1>
+      </template>
+      <object-common object="{{ code }}"></object-common>
+
+      <br><br>
+
+      <div class="memberList">
+        <div class="memberItem">
+          <div class="memberName">Kind</div>
+          <div class="memberValue">{{ code.kind.toString() }}</div>
+        </div>
+        <template if="{{ code.isDartCode }}">
+          <div class="memberItem">
+            <div class="memberName">Optimized</div>
+            <div class="memberValue">{{ code.isOptimized }}</div>
+          </div>
+        </template>
+        <div class="memberItem">
+          <div class="memberName">Function</div>
+          <div class="memberValue">
+            <function-ref ref="{{code.function}}">
+            </function-ref>
+          </div>
+        </div>
+        <div class="memberItem">
+          <div class="memberName">Inclusive</div>
+          <div class="memberValue">{{ code.profile.formattedInclusiveTicks }}</div>
+        </div>
+        <div class="memberItem">
+          <div class="memberName">Exclusive</div>
+          <div class="memberValue">{{ code.profile.formattedExclusiveTicks }}</div>
+        </div>
+        <div class="memberItem">
+          <div class="memberName">Constant object pool</div>
+          <div class="memberValue">
+            <any-service-ref ref="{{ code.objectPool }}"></any-service-ref>
+          </div>
+        </div>
+        <template if="{{ code.inlinedFunctions.isNotEmpty }}">
+          <div class="memberItem">
+            <div class="memberName">inlined functions ({{ code.inlinedFunctions.length }})</div>
+            <div class="memberValue">
+              <curly-block expand="{{ code.inlinedFunctions.length <= 8 }}">
+                <div class="memberList">
+                  <template repeat="{{ func in code.inlinedFunctions }}">
+                    <div class="memberItem">
+                      <div class="memberValue">
+                        <function-ref ref="{{ func }}"></function-ref>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </curly-block>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div class="content-centered-big">
+      <hr>
+      <table id="inlineRangeTable" class="table">
+        <thead id="inlineRangeTableHead">
+          <tr>
+            <th class="address" title="Address range">Address Range</th>
+            <th class="tick" title="Inclusive">Inclusive</th>
+            <th class="tick" title="Exclusive">Exclusive</th>
+            <th title="Functions">Functions</th>
+          </tr>
+        </thead>
+        <tbody class="monospace" id="inlineRangeTableBody">
+        </tbody>
+      </table>
+      <hr>
+      <table id="disassemblyTable" class="table">
+        <thead id="disassemblyTableHead">
+          <tr>
+            <th class="address" title="Address">Address</th>
+            <th class="tick" title="Inclusive">Inclusive</th>
+            <th class="tick" title="Exclusive">Exclusive</th>
+            <th class="disassembly" title="Disassembly">Disassembly</th>
+          </tr>
+        </thead>
+        <tbody class="monospace" id="disassemblyTableBody">
+        </tbody>
+      </table>
+    </div>
+    <view-footer></view-footer>
+  </template>
+</polymer-element>
+
+<script type="application/dart" src="code_view.dart"></script>

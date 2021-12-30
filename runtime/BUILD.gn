@@ -1,0 +1,123 @@
+# Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+# TODO(zra): These build arguments should likely be moved to a gni file that is
+# included in BUILD.gn files that care about the values of the flags. For now,
+# since the GN build only happens as part of a Mojo build there is no need for
+# the indirection.
+declare_args() {
+  # Instead of using is_debug, we introduce a different flag for specifying a
+  # Debug build of Dart so that clients can still use a Release build of Dart
+  # while themselves doing a Debug build.
+  dart_debug = false
+}
+
+config("dart_config") {
+  defines = []
+  if (dart_debug) {
+    defines += ["DEBUG"]
+  } else {
+    defines += ["NDEBUG"]
+  }
+
+  cflags = [
+    "-Werror",
+    "-Wall",
+    "-Wextra", # Also known as -W.
+    "-Wno-unused-parameter",
+    "-Wnon-virtual-dtor",
+    "-Wvla",
+    "-Wno-conversion-null",
+    "-Woverloaded-virtual",
+    "-g3",
+    "-ggdb3",
+    "-fno-rtti",
+    "-fno-exceptions",
+  ]
+
+  if (dart_debug) {
+    cflags += [
+      "-O1",
+    ]
+  } else {
+    cflags += [
+      "-O3",
+    ]
+  }
+
+  if (is_asan) {
+    ldflags = [
+      "-Wl,-u_sanitizer_options_link_helper",
+      "-fsanitize=address",
+    ]
+  }
+}
+
+
+static_library("libdart") {
+  configs += [":dart_config"]
+  deps = [
+    "vm:libdart_lib",
+    "vm:libdart_vm",
+    "third_party/double-conversion/src:libdouble_conversion",
+    ":generate_version_cc_file",
+  ]
+  include_dirs = [
+    ".",
+  ]
+  sources = [
+    "include/dart_api.h",
+    "include/dart_mirrors_api.h",
+    "include/dart_native_api.h",
+    "include/dart_tools_api.h",
+    "vm/dart_api_impl.cc",
+    "vm/debugger_api_impl.cc",
+    "vm/mirrors_api_impl.cc",
+    "vm/native_api_impl.cc",
+    "vm/version.h",
+    "$target_gen_dir/version.cc",
+  ]
+  defines = [
+    # Using DART_SHARED_LIB to export the Dart API entries.
+    "DART_SHARED_LIB",
+  ]
+}
+
+
+action("generate_version_cc_file") {
+  deps = [
+    ":libdart_dependency_helper",
+  ]
+  inputs = [
+    "../tools/utils.py",
+    "../tools/print_version.py",
+    "../tools/VERSION",
+    "vm/version_in.cc",
+  ]
+  output = "$target_gen_dir/version.cc"
+  outputs = [ output, ]
+
+  script = "../tools/make_version.py"
+  args = [
+    "--quiet",
+    "--output", rebase_path(output, root_build_dir),
+    "--input", rebase_path("vm/version_in.cc", root_build_dir),
+    "--ignore_svn_revision",
+  ]
+}
+
+
+executable("libdart_dependency_helper") {
+  configs += [":dart_config"]
+  deps = [
+    "vm:libdart_lib_nosnapshot",
+    "vm:libdart_lib",
+    "vm:libdart_vm",
+    "vm:libdart_platform",
+    "third_party/double-conversion/src:libdouble_conversion",
+  ]
+  sources = [
+    "vm/libdart_dependency_helper.cc",
+  ]
+}

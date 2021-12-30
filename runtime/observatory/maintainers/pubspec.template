@@ -1,0 +1,18 @@
+name: observatory
+version: 1.6.0-dev.1
+transformers:
+- polymer:
+    entry_points:
+    - web/index.html
+    inline_stylesheets:
+      lib/src/elements/css/shared.css: false
+- $dart2js:
+    suppressWarnings: false
+    $exclude: web/main.dart
+    commandLineOptions: [--show-package-warnings]
+dependencies:
+  args: any
+  charted: any
+  polymer: any
+  unittest: < 0.12.0
+  usage: any
